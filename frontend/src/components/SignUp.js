@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./styles/Signup.style.css";
 
 const SignUp = (props) => {
   const [credentials, setCredentials] = useState({
@@ -29,7 +30,7 @@ const SignUp = (props) => {
     if (json.success) {
       // Save the auth token and redirect
       localStorage.setItem("token", json.authtoken);
-      navigate("/");
+      if (props.onSuccess) props.onSuccess();
       props.handleAlert("Account Successfully created", "success");
     } else {
       props.handleAlert("Invalid Credentials", "danger");
@@ -40,76 +41,76 @@ const SignUp = (props) => {
     setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
   return (
-    <div className="row">
-      <div className="container text-center">
-        <h2>Sign Up To Continue</h2>
-      </div>
+    <div className="signup-form">
       <form onSubmit={handleSubmit}>
-        <div className="container col-lg-6 col-md-12 col-sm-12 text-light">
-          <label htmlFor="name" className="form-label">
-            Name
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            // value={credentials.email}
-            onChange={onChange}
-            id="name"
-            name="name"
-            aria-describedby="emailHelp"
-          />
-        </div>
-        <div className="container col-lg-6 col-md-12 col-sm-12 text-light">
-          <label htmlFor="email" className="form-label">
-            Email address
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            // value={credentials.email}
-            onChange={onChange}
-            id="email"
-            name="email"
-            aria-describedby="emailHelp"
-          />
-        </div>
-        <div className="container col-lg-6 col-md-12 col-sm-12 text-light">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            // value={credentials.password}
-            onChange={onChange}
-            name="password"
-            id="password"
-            required
-            minLength={5}
-          />
-        </div>
-        <div className="container col-lg-6 col-md-12 col-sm-12 text-light">
-          <label htmlFor="cpassword" className="form-label">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            // value={credentials.password}
-            onChange={onChange}
-            name="cpassword"
-            id="cpassword"
-            required
-            minLength={5}
-          />
-        </div>
-        <div className="container text-center my-3">
-          <button
-            type="submit"
-            className="btn btn-primary btn-block my-3"
-            style={{ width: "48%" }}
-          >
+        <div className="signup-inner-container">
+          <h1>Sign In</h1>
+          <div className="signup-name">
+            <input
+              type="text"
+              className="form-name-input"
+              onChange={onChange}
+              id="name"
+              name="name"
+              aria-describedby="emailHelp"
+              placeholder=""
+            />
+            <label htmlFor="name" className="form-name">
+              Name
+            </label>
+          </div>
+          <div className="signup-email">
+            <input
+              type="email"
+              className="form-email-input"
+              // value={credentials.email}
+              onChange={onChange}
+              id="email"
+              name="email"
+              aria-describedby="emailHelp"
+              placeholder=""
+            />
+            <label htmlFor="email" className="form-label">
+              Email address
+            </label>
+          </div>
+          <div className="signup-password">
+            <input
+              type="password"
+              className="form-password-input"
+              // value={credentials.password}
+              onChange={onChange}
+              name="password"
+              id="password"
+              required
+              minLength={5}
+              placeholder=""
+            />
+            <label htmlFor="password" className="form-email-input">
+              Password
+            </label>
+          </div>
+          <div className="signup-confirm-password">
+            <input
+              type="password"
+              className="form-confirm-password-input"
+              // value={credentials.password}
+              onChange={onChange}
+              name="cpassword"
+              id="cpassword"
+              required
+              minLength={5}
+              placeholder=""
+            />
+            <label htmlFor="cpassword" className="form-confirm-password">
+              Confirm Password
+            </label>
+          </div>
+          <button type="submit" className="submit-button">
             Submit
+          </button>
+          <button type="button" onClick={props.onClose} className="close-btn">
+            x
           </button>
         </div>
       </form>

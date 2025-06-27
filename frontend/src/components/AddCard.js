@@ -2,8 +2,55 @@ import React, { useContext, useState } from "react";
 import cardContext from "../context/cards/cardContext";
 import Cards from "react-credit-cards-2";
 import "react-credit-cards-2/dist/es/styles-compiled.css";
-import "./CardStyle.css";
+import "./styles/AddCard.style.css";
 import creditcardutils from "creditcardutils";
+import BankPopup from "./BankPopup";
+
+const bankLogos = [
+  { name: "ALLAHABAD BANK", img: "bank/ALLAHABAD BANK.png" },
+  { name: "ANDHRA BANK", img: "bank/ANDHRA BANK.png" },
+  { name: "AXIS BANK", img: "bank/AXIS BANK.png" },
+  { name: "STATE BANK OF INDIA", img: "bank/STATE BANK OF INDIA.png" },
+  { name: "BANK OF BARODA", img: "bank/BANK OF BARODA.png" },
+  { name: "UCO BANK", img: "bank/UCO BANK.png" },
+  { name: "UNION BANK OF INDIA", img: "bank/UNION BANK OF INDIA.png" },
+  { name: "BANK OF INDIA", img: "bank/BANK OF INDIA.png" },
+  { name: "BANDHAN BANK LIMITED", img: "bank/BANDHAN BANK LIMITED.png" },
+  { name: "CANARA BANK", img: "bank/CANARA BANK.png" },
+  { name: "GRAMIN VIKASH BANK", img: "bank/GRAMIN VIKASH BANK.png" },
+  { name: "CORPORATION BANK", img: "bank/CORPORATION BANK.png" },
+  { name: "INDIAN BANK", img: "bank/INDIAN BANK.png" },
+  { name: "INDIAN OVERSEAS BANK", img: "bank/INDIAN OVERSEAS BANK.png" },
+  {
+    name: "ORIENTAL BANK OF COMMERCE",
+    img: "bank/ORIENTAL BANK OF COMMERCE.png",
+  },
+  { name: "PUNJAB AND SIND BANK", img: "bank/PUNJAB AND SIND BANK.png" },
+  { name: "PUNJAB NATIONAL BANK", img: "bank/PUNJAB NATIONAL BANK.png" },
+  { name: "RESERVE BANK OF INDIA", img: "bank/RESERVE BANK OF INDIA.png" },
+  { name: "SOUTH INDIAN BANK", img: "bank/SOUTH INDIAN BANK.png" },
+  { name: "UNITED BANK OF INDIA", img: "bank/UNITED BANK OF INDIA.png" },
+  { name: "CENTRAL BANK OF INDIA", img: "bank/CENTRAL BANK OF INDIA.png" },
+  { name: "VIJAYA BANK", img: "bank/VIJAYA BANK.png" },
+  { name: "DENA BANK", img: "bank/DENA BANK.png" },
+  {
+    name: "BHARATIYA MAHILA BANK LIMITED",
+    img: "bank/BHARATIYA MAHILA BANK LIMITED.png",
+  },
+  { name: "FEDERAL BANK LTD", img: "bank/FEDERAL BANK LTD.png" },
+  { name: "HDFC BANK LTD", img: "bank/HDFC BANK LTD.png" },
+  { name: "ICICI BANK LTD", img: "bank/ICICI BANK LTD.png" },
+  { name: "IDBI BANK LTD", img: "bank/IDBI BANK LTD.png" },
+  { name: "PAYTM BANK", img: "bank/PAYTM BANK.png" },
+  { name: "FINO PAYMENT BANK", img: "bank/FINO PAYMENT BANK.png" },
+  { name: "INDUSIND BANK LTD", img: "bank/INDUSIND BANK LTD.png" },
+  { name: "KARNATAKA BANK LTD", img: "bank/KARNATAKA BANK LTD.png" },
+  { name: "KOTAK MAHINDRA BANK", img: "bank/KOTAK MAHINDRA BANK.png" },
+  { name: "YES BANK LTD", img: "bank/YES BANK LTD.png" },
+  { name: "SYNDICATE BANK", img: "bank/SYNDICATE BANK.png" },
+  { name: "SBM Bank India", img: "bank/SBM Bank India.png" },
+  { name: "BANK OF MAHARASHTRA", img: "bank/BANK OF MAHARASHTRA.png" },
+];
 
 const AddCard = (props) => {
   const context = useContext(cardContext);
@@ -18,8 +65,20 @@ const AddCard = (props) => {
     focus: "",
   });
 
-  const handleClick = (e) => {
+  const [formError, setFormError] = useState("");
+  const [showBankModal, setShowBankModal] = useState(false);
+
+  const handleBankSelect = (bankName) => {
+    setCard({ ...card, BankName: bankName });
+    setShowBankModal(false);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isCardNumberValid || !isExpiryValid || !isCvcValid || !card.BankName) {
+      setFormError("Please fill all fields correctly and select a bank.");
+      return;
+    }
     addCard(
       card.BankName,
       card.CardNumber,
@@ -33,7 +92,9 @@ const AddCard = (props) => {
       CardHolderName: "",
       ExpiryDate: "",
       cvc: "",
+      focus: "",
     });
+    setFormError("");
     props.handleAlert("Cards Added Successfully", "success");
   };
 
@@ -43,10 +104,20 @@ const AddCard = (props) => {
   const handleInputFocus = (evt) => {
     setCard({ ...card, focus: evt.target.name });
   };
+
+  const isCardNumberValid = creditcardutils.validateCardNumber(card.CardNumber);
+  const isExpiryValid = creditcardutils.validateCardExpiry(
+    creditcardutils.parseCardExpiry(card.ExpiryDate)
+  );
+  const isCvcValid = creditcardutils.validateCardCVC(card.cvc);
+
+  const isDisabled = !isCardNumberValid || !isExpiryValid || !isCvcValid;
+
   return (
-    <div className="container my-3">
-      <div className="row">
-        <div className="col" style={{ marginTop: "10%" }}>
+    <div className="addcard-container">
+      <h1 className="addcard-title">Add Card</h1>
+      <div className="addcard-inner">
+        <div className="addcard-card-preview">
           <Cards
             cvc={card.cvc}
             expiry={card.ExpiryDate}
@@ -55,177 +126,139 @@ const AddCard = (props) => {
             focused={card.focus}
           />
         </div>
-        <div className="col frm">
-          <h2 className="my-3 text-center">Add Your Card Here</h2>
-          <form className="my-3">
-            <div className="mb-3">
-              <select
-                name="BankName"
-                className="form-control"
-                required
-                id="BankName"
-                onChange={onChange}
-                value={card.BankName}
-              >
-                <option value="">--Select --</option>
-                <option value="ALLAHABAD BANK">ALLAHABAD BANK </option>
-                <option value="ANDHRA BANK">ANDHRA BANK</option>
-                <option value="AXIS BANK">AXIS BANK</option>
-                <option value="STATE BANK OF INDIA">STATE BANK OF INDIA</option>
-                <option value="BANK OF BARODA">BANK OF BARODA</option>
-                <option value="UCO BANK">UCO BANK</option>
-                <option value="UNION BANK OF INDIA">UNION BANK OF INDIA</option>
-                <option value="BANK OF INDIA">BANK OF INDIA</option>
-                <option value="BANDHAN BANK LIMITED">
-                  BANDHAN BANK LIMITED
-                </option>
-                <option value="CANARA BANK">CANARA BANK</option>
-                <option value="GRAMIN VIKASH BANK">GRAMIN VIKASH BANK</option>
-                <option value="CORPORATION BANK">CORPORATION BANK</option>
-                <option value="INDIAN BANK">INDIAN BANK</option>
-                <option value="INDIAN OVERSEAS BANK">
-                  INDIAN OVERSEAS BANK
-                </option>
-                <option value="ORIENTAL BANK OF COMMERCE">
-                  ORIENTAL BANK OF COMMERCE
-                </option>
-                <option value="PUNJAB AND SIND BANK">
-                  PUNJAB AND SIND BANK
-                </option>
-                <option value="PUNJAB NATIONAL BANK">
-                  PUNJAB NATIONAL BANK
-                </option>
-                <option value="RESERVE BANK OF INDIA">
-                  RESERVE BANK OF INDIA
-                </option>
-                <option value="SOUTH INDIAN BANK">SOUTH INDIAN BANK</option>
-                <option value="UNITED BANK OF INDIA">
-                  UNITED BANK OF INDIA
-                </option>
-                <option value="CENTRAL BANK OF INDIA">
-                  CENTRAL BANK OF INDIA
-                </option>
-                <option value="VIJAYA BANK">VIJAYA BANK</option>
-                <option value="DENA BANK">DENA BANK</option>
-                <option value="BHARATIYA MAHILA BANK LIMITED">
-                  BHARATIYA MAHILA BANK LIMITED
-                </option>
-                <option value="FEDERAL BANK LTD">FEDERAL BANK LTD </option>
-                <option value="HDFC BANK LTD">HDFC BANK LTD</option>
-                <option value="ICICI BANK LTD">ICICI BANK LTD</option>
-                <option value="IDBI BANK LTD">IDBI BANK LTD</option>
-                <option value="PAYTM BANK">PAYTM BANK</option>
-                <option value="FINO PAYMENT BANK">FINO PAYMENT BANK</option>
-                <option value="INDUSIND BANK LTD">INDUSIND BANK LTD</option>
-                <option value="KARNATAKA BANK LTD">KARNATAKA BANK LTD</option>
-                <option value="KOTAK MAHINDRA BANK">KOTAK MAHINDRA BANK</option>
-                <option value="YES BANK LTD">YES BANK LTD</option>
-                <option value="SYNDICATE BANK">SYNDICATE BANK</option>
-                <option value="SBM Bank India">SBM Bank India</option>
-                <option value="BANK OF MAHARASHTRA">BANK OF MAHARASHTRA</option>
-              </select>
-            </div>
-            <div className="mb-3 ip">
-              <input
-                type="number"
-                className="form-control"
-                id="CardNumber"
-                name="CardNumber"
-                onChange={onChange}
-                onFocus={handleInputFocus}
-                placeholder="Card Number"
-                required
-                maxLength={16}
-                value={card.CardNumber}
-              />
-              <p>
-                {!creditcardutils.validateCardNumber(card.CardNumber) ? null : (
-                  <>&#9989;</>
-                )}
-              </p>
-            </div>
-            <div className="mb-3 ip">
-              <input
-                type="text"
-                className="form-control"
-                id="CardHolderName"
-                name="CardHolderName"
-                onChange={onChange}
-                onFocus={handleInputFocus}
-                placeholder="Name"
-                required
-                value={card.CardHolderName}
-              />
-              <p>{!card.CardHolderName ? null : <>&#9989;</>}</p>
-            </div>
-            <div className="mb-3 ip">
-              <input
-                type="text"
-                className="form-control"
-                id="ExpiryDate"
-                name="ExpiryDate"
-                onChange={onChange}
-                onFocus={handleInputFocus}
-                placeholder="Expiry Date (MM/YY)"
-                maxLength={5}
-                required
-                value={card.ExpiryDate}
-              />
-              <p>
-                {!creditcardutils.validateCardExpiry(
-                  creditcardutils.parseCardExpiry(card.ExpiryDate)
-                ) ? null : (
-                  <>&#9989;</>
-                )}
-              </p>
-            </div>
-            <div className="mb-3 ip">
-              <input
-                type="text"
-                className="form-control"
-                id="cvc"
-                name="cvc"
-                onChange={onChange}
-                onFocus={handleInputFocus}
-                placeholder="CVV"
-                required
-                maxLength={4}
-                value={card.cvc}
-              />
-              <p>
-                {!creditcardutils.validateCardCVC(card.cvc) ? null : (
-                  <>&#9989;</>
-                )}
-              </p>
-            </div>
-            <div className="text-center">
-              <button
-                type="submit"
-                className={`btn btn-${
-                  !creditcardutils.validateCardNumber(card.CardNumber) ||
-                  !creditcardutils.validateCardExpiry(
-                    creditcardutils.parseCardExpiry(card.ExpiryDate)
-                  ) ||
-                  !creditcardutils.validateCardCVC(card.cvc)
-                    ? "danger"
-                    : "success"
-                } shadow p-3 mb-5 rounded`}
-                disabled={
-                  !creditcardutils.validateCardNumber(card.CardNumber) ||
-                  !creditcardutils.validateCardExpiry(
-                    creditcardutils.parseCardExpiry(card.ExpiryDate)
-                  ) ||
-                  !creditcardutils.validateCardCVC(card.cvc)
+        <form onSubmit={handleSubmit} className="addcard-form">
+          <div className="signup-name">
+            <button
+              type="button"
+              className="enabled-submit-button"
+              onClick={() => setShowBankModal(true)}
+              style={{ marginBottom: 10 ,marginLeft: 10, width: "100%"}}
+            >
+              {card.BankName ? (
+                <div className="select-bank">
+                  <img
+                    src={
+                      bankLogos.find((b) => b.name === card.BankName)?.img ||
+                      "bank/nothing.png"
+                    }
+                    alt={card.BankName}
+                    // style={{ width: 32, height: 32, marginRight: 8 }}
+                    className="select-bank-logo"
+                  />
+                  <span>{card.BankName}</span>
+                </div>
+              ) : (
+                "Select Bank"
+              )}
+            </button>
+          </div>
+          <div className="signup-name">
+            <input
+              type="number"
+              className="form-name-input"
+              id="CardNumber"
+              name="CardNumber"
+              maxLength={16}
+              value={card.CardNumber}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "").slice(0, 16);
+                setCard({ ...card, CardNumber: value });
+              }}
+              onFocus={handleInputFocus}
+              placeholder=""
+              autoComplete="off"
+              required
+            />
+            <label htmlFor="CardNumber" className="form-name">
+              Card Number{" "}
+              {isCardNumberValid ? (
+                <span className="addcard-valid">✔</span>
+              ) : null}
+            </label>
+          </div>
+          <div className="signup-name">
+            <input
+              type="text"
+              className="form-name-input"
+              id="CardHolderName"
+              name="CardHolderName"
+              value={card.CardHolderName}
+              onChange={onChange}
+              onFocus={handleInputFocus}
+              placeholder=" "
+              autoComplete="off"
+              required
+            />
+            <label htmlFor="CardHolderName" className="form-name">
+              Name
+            </label>
+          </div>
+          <div className="signup-name">
+            <input
+              type="text"
+              className="form-name-input"
+              id="ExpiryDate"
+              name="ExpiryDate"
+              maxLength={5}
+              value={card.ExpiryDate}
+              onChange={(e) => {
+                let value = e.target.value.replace(/\D/g, "");
+                if (value.length === 2 && !card.ExpiryDate.includes("/")) {
+                  value = value + "/";
+                } else if (value.length > 2) {
+                  value = value.slice(0, 2) + "/" + value.slice(2, 4);
                 }
-                onClick={handleClick}
-                onFocus={handleInputFocus}
-              >
-                Add Card
-              </button>
-            </div>
-          </form>
-        </div>
+                setCard({ ...card, ExpiryDate: value });
+              }}
+              onFocus={handleInputFocus}
+              placeholder=" "
+              autoComplete="off"
+              required
+            />
+            <label htmlFor="ExpiryDate" className="form-name">
+              Expiry Date (MM/YY){" "}
+              {isExpiryValid ? <span className="addcard-valid">✔</span> : null}
+            </label>
+          </div>
+          <div className="signup-name">
+            <input
+              type="text"
+              className="form-name-input"
+              id="cvc"
+              name="cvc"
+              maxLength={4}
+              value={card.cvc}
+              onChange={onChange}
+              onFocus={handleInputFocus}
+              placeholder=" "
+              autoComplete="off"
+              required
+            />
+            <label htmlFor="cvc" className="form-name">
+              CVV {isCvcValid ? <span className="addcard-valid">✔</span> : null}
+            </label>
+          </div>
+          <button
+            type="submit"
+            className={
+              isDisabled || !card.BankName
+                ? "disabled-submit-button"
+                : "enabled-submit-button"
+            }
+            disabled={isDisabled || !card.BankName}
+          >
+            {isDisabled || !card.BankName ? "Fill all fields" : "Add Card"}
+          </button>
+          {formError && <div className="form-error">{formError}</div>}
+        </form>
       </div>
+      {showBankModal && (
+        <BankPopup
+          bankLogos={bankLogos}
+          onSelect={handleBankSelect}
+          onClose={() => setShowBankModal(false)}
+        />
+      )}
     </div>
   );
 };

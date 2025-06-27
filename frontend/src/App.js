@@ -1,17 +1,28 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React, { useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Navbar from "./components/NavBar";
 import { Home } from "./components/Home";
 import About from "./components/About";
 import CardState from "./context/cards/CardState";
 import Alert from "./components/Alert";
-import Login from "./components/Login";
-import Signup from "./components/SignUp";
-import { useState } from "react";
 import Footer from "./components/Footer";
+import Landing from "./components/Landing";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
 
 function App() {
   const [alert, setAlert] = useState(null);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
 
   const handleAlert = (message, type) => {
     setAlert({
@@ -23,19 +34,72 @@ function App() {
     }, 1000);
   };
 
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    setShowLogin(false);
+    setShowSignup(false);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("token");
+    setShowLogin(false);
+    setShowSignup(false);
+  };
+
   return (
-    <div style={{ backgroundColor: "#3D3D3D" }}>
+    <div style={{ backgroundColor: "#000" }}>
       <CardState>
         <Router>
-          <Navbar />
+          <Navbar isAuthenticated={isAuthenticated} onLogout={handleLogout} />
           <Alert alert={alert} />
           <div className="container">
             <Routes>
-              <Route path="/" element={<Home handleAlert={handleAlert} />} />
               <Route path="/about" element={<About />} />
-              <Route path="/login" element={<Login handleAlert={handleAlert} />} />
-              <Route path="/signup" element={<Signup handleAlert={handleAlert} />} />
+              <Route
+                path="/"
+                element={
+                  isAuthenticated ? (
+                    <Home handleAlert={handleAlert} />
+                  ) : (
+                    <Landing
+                      onLoginClick={() => {
+                        setShowLogin(true);
+                        setShowSignup(false);
+                      }}
+                      onSignupClick={() => {
+                        setShowSignup(true);
+                        setShowLogin(false);
+                      }}
+                    />
+                  )
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            {/* Popup Modals for Login/Signup */}
+            {showLogin && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <Login
+                    handleAlert={handleAlert}
+                    onSuccess={handleLoginSuccess}
+                    onClose={() => setShowLogin(false)}
+                  />
+                </div>
+              </div>
+            )}
+            {showSignup && (
+              <div className="modal-overlay">
+                <div className="modal-content">
+                  <SignUp
+                    handleAlert={handleAlert}
+                    onSuccess={handleLoginSuccess}
+                    onClose={() => setShowSignup(false)}
+                  />
+                </div>
+              </div>
+            )}
           </div>
           <Footer />
         </Router>

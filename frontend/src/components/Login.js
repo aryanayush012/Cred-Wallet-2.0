@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import "./styles/Login.style.css";
 
 const Login = (props) => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoginError(""); // Clear previous error
     const response = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       headers: {
@@ -22,9 +23,10 @@ const Login = (props) => {
     if (json.success) {
       // Save the auth token and redirect
       localStorage.setItem("token", json.authtoken);
+      if (props.onSuccess) props.onSuccess();
       props.handleAlert("Logged in Successfully", "success");
-      navigate("/");
     } else {
+      setLoginError("Invalid email or password");
       props.handleAlert("Invalid Credentials", "danger");
     }
   };
@@ -34,45 +36,52 @@ const Login = (props) => {
   };
 
   return (
-    <div className="row">
-      <div className="container text-center">
-        <h2>Login To Continue</h2>
-      </div>
+    <div className="login-form">
+      {loginError && (
+        <div className="login-error">
+          <img src="./wrong.gif" alt="wrong credentials" />
+        </div>
+      )}
       <form onSubmit={handleSubmit}>
-        <div className="container col-lg-6 col-md-12 col-sm-12 text-light">
-          <label htmlFor="email" className="form-label">
-            Email address
-          </label>
+      <div className="login-inner-container">
+        <h1>Log In</h1>
+        <div className="login-email">
           <input
             type="email"
-            className="form-control"
+            className="form-email-input"
             value={credentials.email}
             onChange={onChange}
             id="email"
             name="email"
             aria-describedby="emailHelp"
+            placeholder=""
           />
-        </div>
-        <div className="container col-lg-6 col-md-12 col-sm-12 text-light">
-          <label htmlFor="password" className="form-label">
-            Password
+          <label htmlFor="email" className="form-label">
+            Email address
           </label>
+        </div>
+        <div className="login-password">
           <input
             type="password"
-            className="form-control"
+            className="form-password-input"
             value={credentials.password}
             onChange={onChange}
             name="password"
             id="password"
+            placeholder=""
           />
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
         </div>
-        <div className="container text-light my-3 text-center col-sm-12 col-md-12">
           <button
             type="submit"
-            className="btn btn-primary btn-block my-3"
-            style={{ width: "48%" }}
+            className="submit-button"
           >
             Submit
+          </button>
+          <button type="button" onClick={props.onClose} className="close-btn">
+            x
           </button>
         </div>
       </form>
