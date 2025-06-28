@@ -1,55 +1,42 @@
 import React from "react";
+import "./styles/About.style.css";
 
-const About = () => {
-  return (
-    <div className="d-flex text-light">
-      <div className="container" style={{ paddingLeft: "25%" }}>
-        <div className="row">
-          <div className="col-md-8">
-            <h2 className="text-center">About Us</h2>
-            <p>
-              I am Ayush Aryan, a passionate software engineer with a strong
-              academic background and a proven track record of success in
-              developing and delivering high-quality software products. I am
-              currently pursuing my Bachelor of Technology in Computer Science &
-              Engineering with a specialization in Artificial Intelligence and
-              Machine Learning at Lakshmi Narain College of Technology &
-              Science, Bhopal.
-            </p>
-            <p>
-              I have a strong understanding of the fundamentals of computer
-              science, including data structures, algorithms, operating systems,
-              and databases. I am also proficient in a variety of programming
-              languages and frameworks, including C++, JavaScript, HTML/CSS,
-              Node.js, Express.js, and React.js.
-            </p>
-            <p>
-              In my previous role as a Subject Matter Expert Intern at Quesba
-              Edutech Private Limited, I was responsible for developing and
-              delivering high-quality educational content on a variety of
-              topics, including C++, data structures, and algorithms. I also
-              worked on a number of open source projects, including I-Notebook,
-              a personal notebook web application that uses the MERN stack.
-            </p>
-            <p>
-              I am a highly motivated and self-driven individual with a strong
-              work ethic. I am also a team player and have excellent
-              communication and problem-solving skills. I am confident that I
-              have the skills and experience necessary to be successful in a
-              software engineering role.
-            </p>
-            <p>
-              I am always looking for new challenges and opportunities to learn
-              and grow. I am also passionate about using technology to solve
-              real-world problems. If you are looking for a talented and
-              motivated software engineer, I encourage you to contact me.
-            </p>
-          </div>
-          <div className="col-md-6"></div>
-        </div>
-      </div>
-    </div>
-  );
-};
+const About = () => (
+  <div className="about-container">
+    <h1 className="about-title">About Cred Wallet</h1>
+    <p className="about-intro">
+      <strong>Cred Wallet</strong> is a modern web application crafted to help
+      you securely manage and organize all your credit and debit cards in one
+      convenient place. With a focus on security, usability, and performance,
+      Cred Wallet delivers a seamless experience for storing, editing, and
+      validating your card details.
+    </p>
+    <h2 className="about-section-title">Key Features</h2>
+    <ul className="about-features">
+      <li>Automated card type detection</li>
+      <li>Secure authentication powered by JWT</li>
+      <li>Intuitive, responsive UI built with React and Context API</li>
+      <li>Advanced validation of card inputs</li>
+    </ul>
+    <h2 className="about-section-title">About the Developer</h2>
+    <p className="about-developer">
+      <strong>Ayush Aryan</strong> is a passionate full-stack developer with a
+      strong foundation in data structures and algorithms. With extensive
+      experience in the MERN stack, Ayush is dedicated to building robust,
+      scalable, and user-friendly web solutions. He has solved over 500 coding
+      problems on platforms like LeetCode and GFG, and is currently working at{" "}
+      <strong>CarTrade Tech Ltd.</strong>
+    </p>
+    <p>
+      Ayush’s commitment to quality and innovation is reflected in every aspect
+      of Cred Wallet, ensuring users enjoy both convenience and security in
+      their digital card management.
+    </p>
+    <p className="about-footer">
+      Experience the next generation of card management with{" "}
+      <strong>Cred Wallet</strong>.
+    </p>
+  </div>
+);
 
 export default About;

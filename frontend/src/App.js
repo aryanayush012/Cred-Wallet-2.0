@@ -15,6 +15,8 @@ import Footer from "./components/Footer";
 import Landing from "./components/Landing";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
+import Demo from "./components/Demo";
+import Features from "./components/Features";
 
 function App() {
   const [alert, setAlert] = useState(null);
@@ -56,6 +58,8 @@ function App() {
           <div className="container">
             <Routes>
               <Route path="/about" element={<About />} />
+              <Route path="/demo" element={<Demo />} />
+              <Route path="/features" element={<Features />} />
               <Route
                 path="/"
                 element={

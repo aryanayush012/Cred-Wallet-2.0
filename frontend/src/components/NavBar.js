@@ -15,9 +15,9 @@ const NavBar = ({ isAuthenticated, onLogout }) => {
       <Link className="navbar-brand" to="/"></Link>
       <div className="navbar-links">
         <Link
-          className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
+          className={`nav-link ${location.pathname === "/features" ? "active" : ""}`}
           aria-current="page"
-          to="/"
+          to="/features"
         >
           features
         </Link>
@@ -32,9 +32,9 @@ const NavBar = ({ isAuthenticated, onLogout }) => {
         </Link>
         <Link
           className={`nav-link ${
-            location.pathname === "/about" ? "active" : ""
+            location.pathname === "/demo" ? "active" : ""
           }`}
-          to="/about"
+          to="/demo"
         >
           Demo
         </Link>
