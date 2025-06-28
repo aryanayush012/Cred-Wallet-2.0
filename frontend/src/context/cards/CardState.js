@@ -2,7 +2,7 @@ import CardContext from "./cardContext";
 import React, { useState } from "react";
 
 const CardState = (props) => {
-  const host = "http://localhost:5000"; // Replace with your backend URL
+  const host = process.env.REACT_APP_API_URL;
   const cardsInitial = [];
   const [cards, setCards] = useState(cardsInitial);
 
