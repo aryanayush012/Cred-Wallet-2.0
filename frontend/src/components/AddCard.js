@@ -1,9 +1,8 @@
 import React, { useContext, useState } from "react";
 import cardContext from "../context/cards/cardContext";
-import Cards from "react-credit-cards-2";
-import "react-credit-cards-2/dist/es/styles-compiled.css";
+import CardPreview from "./CardPreview";
 import "./styles/AddCard.style.css";
-import creditcardutils from "creditcardutils";
+import { getCardType } from "../utils/cardType";
 import BankPopup from "./BankPopup";
 
 const bankLogos = [
@@ -105,11 +104,10 @@ const AddCard = (props) => {
     setCard({ ...card, focus: evt.target.name });
   };
 
-  const isCardNumberValid = creditcardutils.validateCardNumber(card.CardNumber);
-  const isExpiryValid = creditcardutils.validateCardExpiry(
-    creditcardutils.parseCardExpiry(card.ExpiryDate)
-  );
-  const isCvcValid = creditcardutils.validateCardCVC(card.cvc);
+  const isCardNumberValid =
+    card.CardNumber.length >= 13 && card.CardNumber.length <= 16;
+  const isExpiryValid = /^\d{2}\/\d{2}$/.test(card.ExpiryDate);
+  const isCvcValid = card.cvc.length >= 3 && card.cvc.length <= 4;
 
   const isDisabled = !isCardNumberValid || !isExpiryValid || !isCvcValid;
 
@@ -118,12 +116,13 @@ const AddCard = (props) => {
       <h1 className="addcard-title">Add Card</h1>
       <div className="addcard-inner">
         <div className="addcard-card-preview">
-          <Cards
+          <CardPreview
             cvc={card.cvc}
             expiry={card.ExpiryDate}
             name={card.CardHolderName}
             number={card.CardNumber}
-            focused={card.focus}
+            focus={card.focus}
+            bankName={card.BankName}
           />
         </div>
         <form onSubmit={handleSubmit} className="addcard-form">
@@ -132,7 +131,7 @@ const AddCard = (props) => {
               type="button"
               className="enabled-submit-button"
               onClick={() => setShowBankModal(true)}
-              style={{ marginBottom: 10 ,marginLeft: 10, width: "100%"}}
+              style={{ marginBottom: 10, marginLeft: 10, width: "100%" }}
             >
               {card.BankName ? (
                 <div className="select-bank">
@@ -154,14 +153,19 @@ const AddCard = (props) => {
           </div>
           <div className="signup-name">
             <input
-              type="number"
+              type="text"
               className="form-name-input"
               id="CardNumber"
               name="CardNumber"
-              maxLength={16}
-              value={card.CardNumber}
+              maxLength={19}
+              value={card.CardNumber.replace(/(\d{4})(?=\d)/g, "$1 ")}
               onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "").slice(0, 16);
+                // Remove all non-digits and spaces, then format with spaces every 4 digits
+                let value = e.target.value.replace(/\D/g, "").slice(0, 16);
+                // Only check issuer after every 4 digits
+                if (value.length % 4 === 0 && value.length >= 4) {
+                  getCardType(value);
+                }
                 setCard({ ...card, CardNumber: value });
               }}
               onFocus={handleInputFocus}

@@ -1,51 +1,111 @@
 import React, { useContext } from "react";
+import { getCardType } from "../utils/cardType";
 import cardContext from "../context/cards/cardContext";
-import creditcardutils from "creditcardutils";
-import Image from "./Image";
-import Bank from "./Bank";
 import "./styles/CardItem.style.css";
 
-const Carditem = (props) => {
-  const context = useContext(cardContext);
-  const { deleteCard } = context;
-  const { card, updateCard } = props;
+const CardItem = ({ card, updateCard, handleAlert }) => {
+  const { deleteCard } = useContext(cardContext);
+  const type = getCardType(card.CardNumber);
+  // Card color by issuer
+  let cardColor;
+  switch (type) {
+    case "rupay":
+      cardColor = "#e53935";
+      break;
+    case "visa":
+      cardColor = "#1abc47";
+      break;
+    case "mastercard":
+      cardColor = "#fbb034";
+      break;
+    case "amex":
+      cardColor = "#016fd0";
+      break;
+    case "discover":
+      cardColor = "#f76d1a";
+      break;
+    case "dinersclub":
+      cardColor = "#2e2e2e";
+      break;
+    case "jcb":
+      cardColor = "#007b5f";
+      break;
+    default:
+      cardColor = "linear-gradient(25deg, #939393, #717171)";
+  }
   return (
     <div className="card-item-container">
-      <div className="card-item">
-          <div className="card-item-bank">
-            <Image type={creditcardutils.parseCardType(card.CardNumber)} />
-            <Bank type={card.BankName} />
-            <span>{card.BankName}</span>
+      <div className="card-item-flip" tabIndex={0}>
+        <div
+          className="card-item card-item-inner"
+          style={{ background: cardColor }}
+        >
+          {/* Front Side */}
+          <div className="card-face card-front">
+            {/* Bank Logo and Name */}
+            <div className="card-bank-name">
+              {card.BankName && (
+                <img
+                  src={
+                    card.BankName
+                      ? `/bank/${card.BankName}.png`
+                      : `/bank/nothing.png`
+                  }
+                  alt={card.BankName}
+                  className="card-bank-logo"
+                />
+              )}
+              {card.BankName}
+            </div>
+            {/* Chip Image */}
+            <div src="/chip.png" alt="chip" className="card-chip-img"></div>
+            {/* Issuer Logo */}
+            <img
+              src={type === "rupay" ? "/rupay.png" : `/type/${type}.png`}
+              alt={type}
+              className="card-type-img"
+            />
+            <div className="card-number">
+              {card.CardNumber &&
+                card.CardNumber.replace(/\D/g, "")
+                  .replace(/(.{4})/g, "$1 ")
+                  .trim()}
+            </div>
+            <div className="card-name">
+              {card.CardHolderName && card.CardHolderName.toUpperCase()}
+            </div>
+            <div className="card-expiry">{card.ExpiryDate}</div>
           </div>
-          <div className="card-item-chip"> 
+          {/* Back Side */}
+          <div className="card-item-back">
+            <div className="magnetic-stripe"></div>
+            <div className="card-stripe"></div>
+            <span className="card-cvc-value">{card.cvc || "•••"}</span>
+            <img
+              src={type === "rupay" ? "/rupay.png" : `/type/${type}.png`}
+              alt={type}
+              className="card-type-img-back"
+            />
           </div>
-          <div className="card-item-details">
-            <span className="card-item-number">
-              {creditcardutils.formatCardNumber(card.CardNumber)}
-            </span>
-              <span className="card-item-holder">{card.CardHolderName}</span>
-            
-                <span className="card-item-expiry">{card.ExpiryDate}</span>
-                <span className="card-item-cvc">{card.cvc}</span>
-          </div>
+        </div>
       </div>
       <div className="card-item-actions">
-        <i
-          className="far fa-trash-alt mx-3 my-3"
+        <div
+          className="delete-card-icon"
           onClick={() => {
             deleteCard(card._id);
-            props.handleAlert("Deleted Successfully", "success");
+            handleAlert && handleAlert("Deleted Successfully", "success");
           }}
-        ></i>
-        <i
-          className="far fa-edit mx-3 my-3"
+        ></div>
+        <div
+          className="edit-card-icon"
           onClick={() => {
             updateCard(card);
           }}
-        ></i>
+        ></div>
       </div>
     </div>
   );
 };
 
-export default Carditem;
+export default CardItem;

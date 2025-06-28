@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import cardContext from "../context/cards/cardContext";
 import Carditem from "./CardItem";
 import AddCard from "./AddCard";
+import Card from "./Card";
 import { useNavigate } from "react-router-dom";
-import Cards1 from "react-credit-cards-2";
-import "react-credit-cards-2/dist/es/styles-compiled.css";
 import "./styles/Cards.style.css";
 
 const Cards = (props) => {
@@ -19,8 +18,6 @@ const Cards = (props) => {
     }
     //eslint - disable - next - line;
   }, []);
-  const ref = useRef(null);
-  const refClose = useRef(null);
   const [card, setCard] = useState({
     id: "",
     eBankName: "",
@@ -30,9 +27,10 @@ const Cards = (props) => {
     cvc: "",
     focus: "",
   });
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const updateCard = (currentCard) => {
-    ref.current.click();
+    setShowEditModal(true);
     setCard({
       id: currentCard._id,
       eBankName: currentCard.BankName,
@@ -53,7 +51,7 @@ const Cards = (props) => {
       card.eExpiryDate,
       card.cvc
     );
-    refClose.current.click();
+    setShowEditModal(false);
     props.handleAlert("Cards Updated Successfully", "success");
   };
 
@@ -67,8 +65,35 @@ const Cards = (props) => {
   return (
     <>
       <AddCard handleAlert={props.handleAlert} />
+      {showEditModal && (
+        <div
+          className="edit-card-modal-overlay"
+          onClick={() => setShowEditModal(false)}
+        >
+          <div className="edit-card-modal" onClick={(e) => e.stopPropagation()}>
+            <Card
+              card={card}
+              editMode={true}
+              onClose={() => setShowEditModal(false)}
+              handleAlert={props.handleAlert}
+              onSubmitEdit={(updated) => {
+                editCard(
+                  updated.id,
+                  updated.BankName, // Use the updated bank name
+                  updated.eCardNumber,
+                  updated.eCardHolderName,
+                  updated.eExpiryDate,
+                  updated.cvc
+                );
+                setShowEditModal(false);
+                props.handleAlert("Cards Updated Successfully", "success");
+              }}
+            />
+          </div>
+        </div>
+      )}
       <h1 className="card-text">
-      {cards.length === 0 ? "No Cards to display": "Your Cards"}
+        {cards.length === 0 ? "No Cards to display" : "Your Cards"}
       </h1>
       <div className="all-card-container">
         {cards.map((card) => {
