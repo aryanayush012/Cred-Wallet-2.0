@@ -45,10 +45,20 @@
     border: 1px solid #fff;
     border-radius: 4px;
     background: transparent;
-    height: 30px;
-    outline: none;
     color: #fff;
 }
+
+/* Force autocomplete background to black and text to white */
+.signup-name input:-webkit-autofill,
+.signup-email input:-webkit-autofill,
+.signup-password input:-webkit-autofill,
+.signup-confirm-password input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #000 inset !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: 0 0 0 1000px #000 inset !important;
+  color: #fff !important;
+}
+
 .signup-name label,
 .signup-email label,
 .signup-password label,
