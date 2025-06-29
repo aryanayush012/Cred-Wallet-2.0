@@ -6,14 +6,14 @@ const Demo = () => (
     <h1 className="demo-title">Demo</h1>
     <div className="demo-content">
       <iframe
-        width="560"
+        width="100%"
         height="315"
         src="https://www.youtube.com/embed/NpzvOmZT2x4?si=xCjyVZS_YrQ40TfW&amp;controls=0"
         title="YouTube video player"
-        frameborder="0"
+        frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
+        referrerPolicy="strict-origin-when-cross-origin"
+        // allowFullScreen
       ></iframe>
       <h1 className="demo-title">Cred Wallet Demo</h1>
       <p className="demo-description">

@@ -4,6 +4,8 @@
     width: 100%;
     gap: 20px;
     justify-content: center;
+    /* overflow: hidden; */
+    height: 100%;
 }
 .card-text{
     color: #fff;

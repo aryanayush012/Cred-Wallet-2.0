@@ -159,3 +159,12 @@ background-color: #2a1d16;
     transform: translateX(-50%);
     height: 23%;
 }
+@media (max-width: 410px) {
+  .card-preview {
+    width: 80vw;
+    min-width: 0;
+    max-width: 99vw;
+    height: 200px;
+    padding: 0;
+  }
+}
