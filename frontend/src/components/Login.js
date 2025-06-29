@@ -8,16 +8,19 @@ const Login = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginError(""); // Clear previous error
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: credentials.email,
-        password: credentials.password,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/api/auth/login`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: credentials.email,
+          password: credentials.password,
+        }),
+      }
+    );
     const json = await response.json();
     console.log(json);
     if (json.success) {
@@ -43,41 +46,38 @@ const Login = (props) => {
         </div>
       )}
       <form onSubmit={handleSubmit}>
-      <div className="login-inner-container">
-        <h1>Log In</h1>
-        <div className="login-email">
-          <input
-            type="email"
-            className="form-email-input"
-            value={credentials.email}
-            onChange={onChange}
-            id="email"
-            name="email"
-            aria-describedby="emailHelp"
-            placeholder=""
-          />
-          <label htmlFor="email" className="form-label">
-            Email address
-          </label>
-        </div>
-        <div className="login-password">
-          <input
-            type="password"
-            className="form-password-input"
-            value={credentials.password}
-            onChange={onChange}
-            name="password"
-            id="password"
-            placeholder=""
-          />
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-        </div>
-          <button
-            type="submit"
-            className="submit-button"
-          >
+        <div className="login-inner-container">
+          <h1>Log In</h1>
+          <div className="login-email">
+            <input
+              type="email"
+              className="form-email-input"
+              value={credentials.email}
+              onChange={onChange}
+              id="email"
+              name="email"
+              aria-describedby="emailHelp"
+              placeholder=""
+            />
+            <label htmlFor="email" className="form-label">
+              Email address
+            </label>
+          </div>
+          <div className="login-password">
+            <input
+              type="password"
+              className="form-password-input"
+              value={credentials.password}
+              onChange={onChange}
+              name="password"
+              id="password"
+              placeholder=""
+            />
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+          </div>
+          <button type="submit" className="submit-button">
             Submit
           </button>
           <button type="button" onClick={props.onClose} className="close-btn">

@@ -186,8 +186,17 @@ const AddCard = (props) => {
               className="form-name-input"
               id="CardHolderName"
               name="CardHolderName"
+              maxLength={20}
               value={card.CardHolderName}
-              onChange={onChange}
+              onChange={(e) => {
+                // Only allow a-z and A-Z, max 20 chars
+                const value = e.target.value
+                  .replace(/[^a-zA-Z ]/g, "")
+                  .slice(0, 20);
+                onChange({
+                  target: { name: "CardHolderName", value },
+                });
+              }}
               onFocus={handleInputFocus}
               placeholder=" "
               autoComplete="off"
@@ -211,6 +220,15 @@ const AddCard = (props) => {
                   value = value + "/";
                 } else if (value.length > 2) {
                   value = value.slice(0, 2) + "/" + value.slice(2, 4);
+                }
+                // Only allow month 1-12
+                const [mm] = value.split("/");
+                if (
+                  mm &&
+                  mm.length === 2 &&
+                  (parseInt(mm, 10) < 1 || parseInt(mm, 10) > 12)
+                ) {
+                  return; // Do not update if month is invalid
                 }
                 setCard({ ...card, ExpiryDate: value });
               }}

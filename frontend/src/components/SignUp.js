@@ -14,17 +14,20 @@ const SignUp = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { name, email, password } = credentials;
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/auth/createuser`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/api/auth/createuser`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      }
+    );
     const json = await response.json();
     console.log(json);
     if (json.success) {
@@ -49,7 +52,16 @@ const SignUp = (props) => {
             <input
               type="text"
               className="form-name-input"
-              onChange={onChange}
+              maxLength={20}
+              onChange={(e) => {
+                // Only allow a-z and A-Z, max 20 chars
+                const value = e.target.value
+                  .replace(/[^a-zA-Z ]/g, "")
+                  .slice(0, 20);
+                onChange({
+                  target: { name: "name", value },
+                });
+              }}
               id="name"
               name="name"
               aria-describedby="emailHelp"

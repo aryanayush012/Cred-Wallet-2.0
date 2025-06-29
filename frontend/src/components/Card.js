@@ -203,8 +203,17 @@ const Card = ({ card, editMode, onClose, handleAlert, onSubmitEdit }) => {
               className="form-name-input"
               id="name"
               name="name"
+              maxLength={20}
               value={state.name}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                // Only allow a-z and A-Z, max 20 chars
+                const value = e.target.value
+                  .replace(/[^a-zA-Z ]/g, "")
+                  .slice(0, 20);
+                handleInputChange({
+                  target: { name: "name", value },
+                });
+              }}
               onFocus={handleInputFocus}
               placeholder=" "
               autoComplete="off"
@@ -222,7 +231,26 @@ const Card = ({ card, editMode, onClose, handleAlert, onSubmitEdit }) => {
               name="expiry"
               maxLength={5}
               value={state.expiry}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                let value = e.target.value.replace(/\D/g, "");
+                if (value.length === 2 && !state.expiry.includes("/")) {
+                  value = value + "/";
+                } else if (value.length > 2) {
+                  value = value.slice(0, 2) + "/" + value.slice(2, 4);
+                }
+                // Only allow month 1-12
+                const [mm] = value.split("/");
+                if (
+                  mm &&
+                  mm.length === 2 &&
+                  (parseInt(mm, 10) < 1 || parseInt(mm, 10) > 12)
+                ) {
+                  return; // Do not update if month is invalid
+                }
+                handleInputChange({
+                  target: { name: "expiry", value },
+                });
+              }}
               onFocus={handleInputFocus}
               placeholder=" "
               autoComplete="off"
