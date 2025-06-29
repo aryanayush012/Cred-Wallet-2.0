@@ -49,6 +49,7 @@
     .hero-container {
         flex-direction: column;
         height: auto;
+        padding-top: 50px;
     }
 
     .content,
@@ -65,5 +66,8 @@
 
     .hero-buttons {
         justify-content: center;
+        align-items: center;
+        width: 100%;
+        display: flex;
     }
 }
