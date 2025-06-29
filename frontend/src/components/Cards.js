@@ -42,7 +42,6 @@ const Cards = (props) => {
   };
 
   const handleClick = (e) => {
-    console.log("Updating the card...", card);
     editCard(
       card.id,
       card.eBankName,
